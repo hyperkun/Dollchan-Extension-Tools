@@ -43,7 +43,7 @@ class BaseBoard {
 		this.hasOPNum = false;
 		this.hasPicWrap = false;
 		this.hasTextLinks = false;
-		this.host = window.location.hostname;
+		this.host = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
 		this.JsonBuilder = null;
 		this.jsonSubmit = false;
 		this.markupBB = false;
