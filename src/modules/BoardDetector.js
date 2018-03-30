@@ -363,7 +363,7 @@ function getImageBoard(checkDomains, checkEngines) {
 			this.qDelPassw = '#password';
 			this.qPostImg = '.post-image[alt]:not(.deleted)';
 
-			this.multiFile = true;
+			this.multiFile = false;
 		}
 		get css() {
 			return `${ super.css }
