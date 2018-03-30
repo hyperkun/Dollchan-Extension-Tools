@@ -398,6 +398,19 @@ function getImageBoard(checkDomains, checkEngines) {
 			}
 			return false;
 		}
+		getSubmitData(json) {
+			let error = null;
+			let postNum = null;
+			if(json.id) {
+				postNum = +json.id;
+			} else {
+				error = Lng.error[lang];
+				if(json.message) {
+					error += ':\n' + json.message;
+				}
+			}
+			return { error, postNum };
+		}
 	}
 	ibEngines.push(['tr#upload', Vichan]);
 
