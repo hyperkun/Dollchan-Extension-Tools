@@ -102,7 +102,7 @@ class AbstractPost {
 						} else if(aib.t) {
 							const formText = pr.txta.value;
 							const isOnNewLine = formText === '' || formText.slice(-1) === '\n';
-							$txtInsert(pr.txta, `>>${ this.num }${ isOnNewLine ? '\n' : '' }`);
+							$txtInsert(pr.txta, `<${ this.num }>${ isOnNewLine ? '\n' : '' }`);
 						} else {
 							window.location.assign(el.href.replace(/#i/, '#'));
 						}
@@ -234,7 +234,7 @@ class AbstractPost {
 			if(!Cfg.linksNavig || el.tagName !== 'A' || el.lchecked) {
 				return;
 			}
-			if(!el.textContent.startsWith('>>')) {
+			if(!el.textContent.startsWith('<')) {
 				el.lchecked = true;
 				return;
 			}
@@ -445,7 +445,7 @@ class Post extends AbstractPost {
 			}
 			let j = len;
 			while(j--) {
-				if(curWords[j] === words[i] || words[i].match(/>>\d+/) && curWords[j].match(/>>\d+/)) {
+				if(curWords[j] === words[i] || words[i].match(/<\d+>/) && curWords[j].match(/<\d+>/)) {
 					n++;
 				}
 			}
@@ -784,7 +784,7 @@ class Post extends AbstractPost {
 			this.ref.toggleRef(isHide, true);
 			this.setUserVisib(isHide);
 			return;
-		case 'hide-refsonly': Spells.addSpell(0 /* #words */, '>>' + this.num, false); return;
+		case 'hide-refsonly': Spells.addSpell(0 /* #words */, '<' + this.num + '>', false); return;
 		case 'thr-exp': {
 			const task = +el.textContent.match(/\d+/);
 			this.thr.loadPosts(!task ? 'all' : task === 10 ? 'more' : task);

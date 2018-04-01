@@ -285,9 +285,9 @@ class PostForm {
 		const txt = this.txta.value;
 		const isOnNewLine = txt === '' || txt.slice(-1) === '\n';
 		const link = isNoLink || post.isOp && !Cfg.addOPLink && !aib.t && !isNumClick ? '' :
-			isNumClick ? `>>${ pNum }${ isOnNewLine ? '\n' : '' }` :
+			isNumClick ? `<${ pNum }>${ isOnNewLine ? '\n' : '' }` :
 			(isOnNewLine ? '' : '\n') +
-				(this.lastQuickPNum === pNum && txt.includes('>>' + pNum) ? '' : `>>${ pNum }\n`);
+				(this.lastQuickPNum === pNum && txt.includes('<' + pNum + '>') ? '' : `<${ pNum }>\n`);
 		const quote = !quotetxt ? '' : `${ quotetxt.replace(/^\n|\n$/g, '')
 			.replace(/(^|\n)(.)/gm, `$1>${ Cfg.spacedQuote ? ' ' : '' }$2`) }\n`;
 		$txtInsert(this.txta, link + quote);

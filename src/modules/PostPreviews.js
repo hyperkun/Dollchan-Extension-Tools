@@ -229,7 +229,7 @@ class Pview extends AbstractPost {
 
 	static _markLink(el, num) {
 		$each($Q(`a[href*="${ num }"]`, el),
-			el => el.textContent.startsWith('>>' + num) && el.classList.add('de-link-pview'));
+			el => el.textContent.startsWith('<' + num + '>') && el.classList.add('de-link-pview'));
 	}
 	async _buildPview(post) {
 		$del(this.el);
