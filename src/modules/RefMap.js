@@ -17,7 +17,7 @@ class RefMap {
 			for(let lNum, i = 0, len = links.length; i < len; ++i) {
 				const link = links[i];
 				const tc = link.textContent;
-				if(tc[0] !== '>' || tc[1] !== '>' || !(lNum = parseInt(tc.substr(2), 10))) {
+				if(!(lNum = this._parseIdFromLinkTextContent(tc))) {
 					continue;
 				}
 				if(MyPosts.has(lNum)) {
@@ -65,7 +65,7 @@ class RefMap {
 		for(let lNum, i = 0, len = links.length; i < len; ++i) {
 			const link = links[i];
 			const tc = link.textContent;
-			if(tc[0] !== '>' || tc[1] !== '>' || !(lNum = parseInt(tc.substr(2), 10))) {
+			if(!(lNum = this._parseIdFromLinkTextContent(tc))) {
 				continue;
 			}
 			if(isAdd && MyPosts.has(lNum)) {
@@ -210,5 +210,10 @@ class RefMap {
 		return `<a href="${ tUrl }${ aib.anchor }${ num }" class="de-link-ref${
 			isHidden ? ' de-link-hid' : '' }${ MyPosts.has(num) ? ' de-ref-my' : ''
 		}">&gt;&gt;${ num }</a><span class="de-refcomma">, </span>`;
+	}
+	static _parseIdFromLinkTextContent(tc) {
+		return tc.length > 2 &&
+		       tc[0] === '<' && tc[tc.length - 1] === '>' &&
+		       parseInt(tc.substr(1, tc.length - 2), 10);
 	}
 }
