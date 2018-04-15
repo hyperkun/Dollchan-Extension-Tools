@@ -30,7 +30,7 @@
 'use strict';
 
 const version = '18.2.19.0';
-const commit = 'db5b9f5';
+const commit = '86b66d7';
 
 /* ==[ DefaultCfg.js ]========================================================================================
                                                 DEFAULT CONFIG
@@ -6638,6 +6638,7 @@ function $ajax(url, params = null, useNative = nativeXHRworks) {
 					}
 				}
 			}
+			xhr.withCredentials = true;
 			xhr.send(params && params.data || null);
 			cancelFn = () => {
 				if(needTO) {

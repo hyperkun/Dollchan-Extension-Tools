@@ -3830,7 +3830,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 	var _marked = regeneratorRuntime.mark(getFormElements);
 
 	var version = '18.2.19.0';
-	var commit = 'db5b9f5';
+	var commit = '86b66d7';
 
 
 	var defaultCfg = {
@@ -9890,6 +9890,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 						}
 					}
 				}
+				xhr.withCredentials = true;
 				xhr.send(params && params.data || null);
 				cancelFn = function cancelFn() {
 					if (needTO) {
