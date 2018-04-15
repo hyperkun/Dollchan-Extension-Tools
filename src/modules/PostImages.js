@@ -348,13 +348,13 @@ class ExpandableImage {
 		return value;
 	}
 	get isImage() {
-		const value = /\.jpe?g|\.png|\.gif/i.test(this.src) ||
+		const value = /\.jpe?g|\.png|\.gif/i.test(this.visibleSrc) ||
 			(this.src.startsWith('blob:') && !this.el.hasAttribute('de-video'));
 		Object.defineProperty(this, 'isImage', { value });
 		return value;
 	}
 	get isVideo() {
-		const value = /\.(?:webm|mp4|ogv)(?:&|$)/i.test(this.src) ||
+		const value = /\.(?:webm|mp4|ogv)(?:&|$)/i.test(this.visibleSrc) ||
 			(this.src.startsWith('blob:') && this.el.hasAttribute('de-video'));
 		Object.defineProperty(this, 'isVideo', { value });
 		return value;
@@ -362,6 +362,19 @@ class ExpandableImage {
 	get src() {
 		const value = this._getImageSrc();
 		Object.defineProperty(this, 'src', { value });
+		return value;
+	}
+	get visibleSrc() {
+		const v = () => {
+			try {
+				const link = this.el.parentNode.parentNode.querySelector("p.fileinfo > a");
+				return link.textContent;
+			} catch (e) {
+				return "";
+			}
+		};
+		const value = v();
+		Object.defineProperty(this, 'visibleSrc', { value });
 		return value;
 	}
 	get width() {
