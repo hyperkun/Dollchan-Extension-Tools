@@ -30,7 +30,7 @@
 'use strict';
 
 const version = '18.2.19.0';
-const commit = 'f588f8d';
+const commit = 'db5b9f5';
 
 /* ==[ DefaultCfg.js ]========================================================================================
                                                 DEFAULT CONFIG
@@ -8482,9 +8482,9 @@ class PostForm {
 		const txt = this.txta.value;
 		const isOnNewLine = txt === '' || txt.slice(-1) === '\n';
 		const link = isNoLink || post.isOp && !Cfg.addOPLink && !aib.t && !isNumClick ? '' :
-			isNumClick ? `>>${ pNum }${ isOnNewLine ? '\n' : '' }` :
+			isNumClick ? `<${ pNum }>${ isOnNewLine ? '\n' : '' }` :
 			(isOnNewLine ? '' : '\n') +
-				(this.lastQuickPNum === pNum && txt.includes('>>' + pNum) ? '' : `>>${ pNum }\n`);
+				(this.lastQuickPNum === pNum && txt.includes('<' + pNum + '>') ? '' : `<${ pNum }>\n`);
 		const quote = !quotetxt ? '' : `${ quotetxt.replace(/^\n|\n$/g, '')
 			.replace(/(^|\n)(.)/gm, `$1>${ Cfg.spacedQuote ? ' ' : '' }$2`) }\n`;
 		$txtInsert(this.txta, link + quote);
@@ -9927,7 +9927,7 @@ class AbstractPost {
 						} else if(aib.t) {
 							const formText = pr.txta.value;
 							const isOnNewLine = formText === '' || formText.slice(-1) === '\n';
-							$txtInsert(pr.txta, `>>${ this.num }${ isOnNewLine ? '\n' : '' }`);
+							$txtInsert(pr.txta, `<${ this.num }>${ isOnNewLine ? '\n' : '' }`);
 						} else {
 							window.location.assign(el.href.replace(/#i/, '#'));
 						}
@@ -10059,7 +10059,7 @@ class AbstractPost {
 			if(!Cfg.linksNavig || el.tagName !== 'A' || el.lchecked) {
 				return;
 			}
-			if(!el.textContent.startsWith('>>')) {
+			if(!el.textContent.startsWith('<')) {
 				el.lchecked = true;
 				return;
 			}
@@ -10270,7 +10270,7 @@ class Post extends AbstractPost {
 			}
 			let j = len;
 			while(j--) {
-				if(curWords[j] === words[i] || words[i].match(/>>\d+/) && curWords[j].match(/>>\d+/)) {
+				if(curWords[j] === words[i] || words[i].match(/<\d+>/) && curWords[j].match(/<\d+>/)) {
 					n++;
 				}
 			}
@@ -10609,7 +10609,7 @@ class Post extends AbstractPost {
 			this.ref.toggleRef(isHide, true);
 			this.setUserVisib(isHide);
 			return;
-		case 'hide-refsonly': Spells.addSpell(0 /* #words */, '>>' + this.num, false); return;
+		case 'hide-refsonly': Spells.addSpell(0 /* #words */, '<' + this.num + '>', false); return;
 		case 'thr-exp': {
 			const task = +el.textContent.match(/\d+/);
 			this.thr.loadPosts(!task ? 'all' : task === 10 ? 'more' : task);
@@ -10856,7 +10856,7 @@ class Pview extends AbstractPost {
 	}
 	static showPview(parent, link) {
 		const tNum = +(link.pathname.match(/.+?\/[^\d]*(\d+)/) || [0, aib.getPostOfEl(link).tNum])[1];
-		const pNum = +(link.textContent.trim().match(/\d+$/) || [tNum]);
+		const pNum = +(link.textContent.trim().match(/\d+/) || [tNum]);
 		const isTop = !(parent instanceof Pview);
 		let pv = isTop ? Pview.top : parent.kid;
 		clearTimeout(Pview._delTO);
@@ -11031,7 +11031,7 @@ class Pview extends AbstractPost {
 
 	static _markLink(el, num) {
 		$each($Q(`a[href*="${ num }"]`, el),
-			el => el.textContent.startsWith('>>' + num) && el.classList.add('de-link-pview'));
+			el => el.textContent.startsWith('<' + num + '>') && el.classList.add('de-link-pview'));
 	}
 	async _buildPview(post) {
 		$del(this.el);
@@ -11620,13 +11620,13 @@ class ExpandableImage {
 		return value;
 	}
 	get isImage() {
-		const value = /\.jpe?g|\.png|\.gif/i.test(this.src) ||
+		const value = /\.jpe?g|\.png|\.gif/i.test(this.visibleSrc) ||
 			(this.src.startsWith('blob:') && !this.el.hasAttribute('de-video'));
 		Object.defineProperty(this, 'isImage', { value });
 		return value;
 	}
 	get isVideo() {
-		const value = /\.(?:webm|mp4|ogv)(?:&|$)/i.test(this.src) ||
+		const value = /\.(?:webm|mp4|ogv)(?:&|$)/i.test(this.visibleSrc) ||
 			(this.src.startsWith('blob:') && this.el.hasAttribute('de-video'));
 		Object.defineProperty(this, 'isVideo', { value });
 		return value;
@@ -11634,6 +11634,19 @@ class ExpandableImage {
 	get src() {
 		const value = this._getImageSrc();
 		Object.defineProperty(this, 'src', { value });
+		return value;
+	}
+	get visibleSrc() {
+		const v = () => {
+			try {
+				const link = this.el.parentNode.parentNode.querySelector("p.fileinfo > a");
+				return link.textContent;
+			} catch (e) {
+				return "";
+			}
+		};
+		const value = v();
+		Object.defineProperty(this, 'visibleSrc', { value });
 		return value;
 	}
 	get width() {
@@ -12769,7 +12782,7 @@ class RefMap {
 			for(let lNum, i = 0, len = links.length; i < len; ++i) {
 				const link = links[i];
 				const tc = link.textContent;
-				if(tc[0] !== '>' || tc[1] !== '>' || !(lNum = parseInt(tc.substr(2), 10))) {
+				if(!(lNum = this._parseIdFromLinkTextContent(tc))) {
 					continue;
 				}
 				if(MyPosts.has(lNum)) {
@@ -12817,7 +12830,7 @@ class RefMap {
 		for(let lNum, i = 0, len = links.length; i < len; ++i) {
 			const link = links[i];
 			const tc = link.textContent;
-			if(tc[0] !== '>' || tc[1] !== '>' || !(lNum = parseInt(tc.substr(2), 10))) {
+			if(!(lNum = this._parseIdFromLinkTextContent(tc))) {
 				continue;
 			}
 			if(isAdd && MyPosts.has(lNum)) {
@@ -12962,6 +12975,11 @@ class RefMap {
 		return `<a href="${ tUrl }${ aib.anchor }${ num }" class="de-link-ref${
 			isHidden ? ' de-link-hid' : '' }${ MyPosts.has(num) ? ' de-ref-my' : ''
 		}">&gt;&gt;${ num }</a><span class="de-refcomma">, </span>`;
+	}
+	static _parseIdFromLinkTextContent(tc) {
+		return tc.length > 2 &&
+		       tc[0] === '<' && tc[tc.length - 1] === '>' &&
+		       parseInt(tc.substr(1, tc.length - 2), 10);
 	}
 }
 
@@ -14534,7 +14552,7 @@ class BaseBoard {
 		this.hasOPNum = false;
 		this.hasPicWrap = false;
 		this.hasTextLinks = false;
-		this.host = window.location.hostname;
+		this.host = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
 		this.JsonBuilder = null;
 		this.jsonSubmit = false;
 		this.markupBB = false;
@@ -15193,7 +15211,7 @@ function getImageBoard(checkDomains, checkEngines) {
 			this.qDelPassw = '#password';
 			this.qPostImg = '.post-image[alt]:not(.deleted)';
 
-			this.multiFile = true;
+			this.multiFile = false;
 		}
 		get css() {
 			return `${ super.css }
@@ -15227,6 +15245,19 @@ function getImageBoard(checkDomains, checkEngines) {
 				textarea.removeAttribute('id');
 			}
 			return false;
+		}
+		getSubmitData(json) {
+			let error = null;
+			let postNum = null;
+			if(json.id) {
+				postNum = +json.id;
+			} else {
+				error = Lng.error[lang];
+				if(json.message) {
+					error += ':\n' + json.message;
+				}
+			}
+			return { error, postNum };
 		}
 	}
 	ibEngines.push(['tr#upload', Vichan]);
