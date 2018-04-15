@@ -100,6 +100,7 @@ function $ajax(url, params = null, useNative = nativeXHRworks) {
 					}
 				}
 			}
+			xhr.withCredentials = true;
 			xhr.send(params && params.data || null);
 			cancelFn = () => {
 				if(needTO) {
