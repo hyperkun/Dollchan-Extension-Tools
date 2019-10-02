@@ -1862,6 +1862,17 @@ function getImageBoard(checkDomains, checkEngines) {
 	ibDomains['syn-ch.com'] = Synch;
 	ibDomains['syn-ch.org'] = Synch;
 
+	class HyperchanK extends Kropyvach {
+		get geoTokenPromise() {
+			if(this.b !== 'p') {
+				return null;
+			}
+			return $ajax('https://geo.hyperchan.org').then(x => x.responseText);
+		}
+	}
+	ibEngines.push(['form[action$="/api/post?b"]', HyperchanK]);
+	ibDomains['k.hyperchan.org'] = HyperchanK;
+
 	const prot = window.location.protocol;
 	let dm = localData && localData.dm;
 	if(checkDomains) {

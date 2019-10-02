@@ -111,6 +111,9 @@ class BaseBoard {
 	get fixFileInputs() {
 		return null;
 	}
+	get geoTokenPromise() { // Differs HyperchanK only
+		return null;
+	}
 	get getSubmitData() {
 		return null;
 	}

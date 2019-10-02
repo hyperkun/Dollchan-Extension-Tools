@@ -201,6 +201,11 @@ async function html5Submit(form, submitter, needProgress = false) {
 		}
 		data.append(name, val);
 	}
+	const tokenPromise = aib.geoTokenPromise;
+	if(tokenPromise) {
+		const geoToken = await tokenPromise;
+		data.append('g', geoToken);
+	}
 	if(aib.sendHTML5Post) {
 		return aib.sendHTML5Post(form, data, needProgress, hasFiles);
 	}

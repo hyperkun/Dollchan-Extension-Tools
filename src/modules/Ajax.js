@@ -100,7 +100,9 @@ function $ajax(url, params = null, useNative = nativeXHRworks) {
 					}
 				}
 			}
-			xhr.withCredentials = true;
+			if(!url.startsWith('http://') && !url.startsWith('https://')) {
+				xhr.withCredentials = true;
+			}
 			xhr.send(params && params.data || null);
 			cancelFn = () => {
 				if(needTO) {
