@@ -100,7 +100,7 @@ function $ajax(url, params = null, useNative = nativeXHRworks) {
 					}
 				}
 			}
-			if(!url.startsWith('http://') && !url.startsWith('https://')) {
+			if(url.startsWith('https://hyperchan.org/')) {
 				xhr.withCredentials = true;
 			}
 			xhr.send(params && params.data || null);
